@@ -3,8 +3,10 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -79,6 +81,10 @@ func analyzeOne(t LogTarget) Result {
 			ErrorDetails: err.Error(),
 		}
 	}
+	// simuler une analyze avec un sleep de 50-200ms
+	delay := rand.Intn(151) + 50
+	time.Sleep(time.Duration(delay) * time.Millisecond)
+
 	return Result{
 		LogID:        t.ID,
 		FilePath:     t.Path,

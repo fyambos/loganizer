@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"sync"
 
 	"github.com/spf13/cobra"
 )
@@ -39,6 +40,39 @@ func runAnalyze(configPath, outputPath string) {
 		return
 	}
 	fmt.Println("Config chargée avec", len(logs), "entrées")
+
+	// inspiré d'un exemple goroutine + waitgroup
+	results := make([]Result, 0, len(logs)) // slice pour stocker les résultats
+	out := make(chan Result)                // canal pour recevoir les résultats
+
+	var wg sync.WaitGroup // waitgroup pour attendre les goroutines
+
+	// lancer une goroutine par log
+	for _, t := range logs {
+		wg.Add(1)
+		go func(target LogTarget) {
+			defer wg.Done()
+			// ici on envoie un résultat simulé dans le canal
+			out <- Result{
+				LogID:    target.ID,
+				FilePath: target.Path,
+				Status:   "OK",
+				Message:  "Analyse simulée.",
+			}
+		}(t)
+	}
+
+	// fermeture du canal quand toutes les goroutines ont fini
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
+
+	// boucle de réception des résultats
+	for r := range out {
+		results = append(results, r)
+		fmt.Println("Résultat pour", r.LogID, ":", r.Status)
+	}
 }
 
 var analyzeCmd = &cobra.Command{

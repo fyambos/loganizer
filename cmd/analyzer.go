@@ -41,7 +41,7 @@ func runAnalyze(configPath, outputPath string) {
 	}
 	fmt.Println("Config chargée avec", len(logs), "entrées")
 
-	// inspiré d'un exemple goroutine + waitgroup
+	// inspiré de l'exemple urlchecker goroutine + waitgroup
 	results := make([]Result, 0, len(logs)) // slice pour stocker les résultats
 	out := make(chan Result)                // canal pour recevoir les résultats
 
@@ -50,15 +50,9 @@ func runAnalyze(configPath, outputPath string) {
 	// lancer une goroutine par log
 	for _, t := range logs {
 		wg.Add(1)
-		go func(target LogTarget) {
+		go func(tt LogTarget) {
 			defer wg.Done()
-			// ici on envoie un résultat simulé dans le canal
-			out <- Result{
-				LogID:    target.ID,
-				FilePath: target.Path,
-				Status:   "OK",
-				Message:  "Analyse simulée.",
-			}
+			out <- analyzeOne(tt) // on appelle la fonction dédiée
 		}(t)
 	}
 
@@ -71,7 +65,26 @@ func runAnalyze(configPath, outputPath string) {
 	// boucle de réception des résultats
 	for r := range out {
 		results = append(results, r)
-		fmt.Println("Résultat pour", r.LogID, ":", r.Status)
+		fmt.Printf("[%s] %s (%s): %s\n", r.Status, r.LogID, r.FilePath, r.Message)
+	}
+}
+
+func analyzeOne(t LogTarget) Result {
+	if _, err := os.Stat(t.Path); err != nil {
+		return Result{
+			LogID:        t.ID,
+			FilePath:     t.Path,
+			Status:       "FAILED",
+			Message:      "Fichier introuvable.",
+			ErrorDetails: err.Error(),
+		}
+	}
+	return Result{
+		LogID:        t.ID,
+		FilePath:     t.Path,
+		Status:       "OK",
+		Message:      "Analyse terminée.",
+		ErrorDetails: "",
 	}
 }
 

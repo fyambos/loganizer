@@ -14,8 +14,8 @@
     "error_details": "GetFileAttributesEx /non/existent/log.log: The system cannot find the path specified."
   },
   {
-    "log_id": "corrupted-log",
-    "file_path": "test_logs/corrupted.log",
+    "log_id": "empty-log",
+    "file_path": "test_logs/empty.log",
     "status": "OK",
     "message": "Analyse terminée avec succès.",
     "error_details": ""
@@ -35,8 +35,8 @@
     "error_details": ""
   },
   {
-    "log_id": "empty-log",
-    "file_path": "test_logs/empty.log",
+    "log_id": "corrupted-log",
+    "file_path": "test_logs/corrupted.log",
     "status": "OK",
     "message": "Analyse terminée avec succès.",
     "error_details": ""

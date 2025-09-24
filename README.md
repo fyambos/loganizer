@@ -46,7 +46,7 @@ Votre outil `loganalyzer` devra implémenter les fonctionnalités suivantes :
 - **Traitement concurrentiel :** Une **goroutine** sera lancée pour chaque log :
   - Vérifier si le fichier existe et est lisible.
   - Simuler l'analyse avec un `time.Sleep` aléatoire (50 à 200 ms).
-  - **Erreur aléatoire simulée :** 10% de chance de générer une erreur de parsing.
+
 
 - **Collecte et Exportation des résultats :**
   - Résultats collectés via un **canal sécurisé**.
@@ -79,7 +79,7 @@ Votre outil `loganalyzer` devra implémenter les fonctionnalités suivantes :
 - Implémenter au moins **deux types d'erreurs personnalisées** :
   - Fichier introuvable/inaccessible.
   - Erreur de parsing.
-- Utiliser `errors.Is()` et `errors.As()` pour les gérer proprement.
+- Utiliser `errors.Is()` et/ou `errors.As()` pour les gérer proprement.
 
 ---
 

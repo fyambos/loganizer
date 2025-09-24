@@ -54,7 +54,7 @@ func runAnalyze(configPath, outputPath string) {
 		wg.Add(1)
 		go func(tt LogTarget) {
 			defer wg.Done()
-			out <- analyzeOne(tt) // on appelle la fonction dédiée
+			out <- analyzeOne(tt)
 		}(t)
 	}
 
@@ -68,7 +68,18 @@ func runAnalyze(configPath, outputPath string) {
 	for r := range out {
 		results = append(results, r)
 		fmt.Printf("[%s] %s (%s): %s\n", r.Status, r.LogID, r.FilePath, r.Message)
+		if r.Status == "FAILED" {
+			fmt.Println("  Détails erreur:", r.ErrorDetails)
+		}
 	}
+
+	// écriture du rapport JSON
+	rep, _ := json.MarshalIndent(results, "", "  ")
+	if err := os.WriteFile(outputPath, rep, 0644); err != nil {
+		fmt.Println("Erreur écriture rapport:", err)
+		return
+	}
+	fmt.Println("Rapport écrit dans", outputPath)
 }
 
 func analyzeOne(t LogTarget) Result {
@@ -89,7 +100,7 @@ func analyzeOne(t LogTarget) Result {
 		LogID:        t.ID,
 		FilePath:     t.Path,
 		Status:       "OK",
-		Message:      "Analyse terminée.",
+		Message:      "Analyse terminée avec succès.",
 		ErrorDetails: "",
 	}
 }

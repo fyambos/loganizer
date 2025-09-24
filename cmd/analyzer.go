@@ -6,6 +6,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type LogTarget struct {
+	ID   string `json:"id"`
+	Path string `json:"path"`
+	Type string `json:"type"`
+}
+
+type Result struct {
+	LogID        string `json:"log_id"`
+	FilePath     string `json:"file_path"`
+	Status       string `json:"status"`
+	Message      string `json:"message"`
+	ErrorDetails string `json:"error_details"`
+}
+
 var (
 	configPath string
 	outputPath string

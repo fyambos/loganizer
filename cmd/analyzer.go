@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -25,11 +27,26 @@ var (
 	outputPath string
 )
 
+func runAnalyze(configPath, outputPath string) {
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		fmt.Println("Erreur lecture config:", err)
+		return
+	}
+	var logs []LogTarget
+	if err := json.Unmarshal(data, &logs); err != nil {
+		fmt.Println("Erreur parsing JSON:", err)
+		return
+	}
+	fmt.Println("Config chargée avec", len(logs), "entrées")
+}
+
 var analyzeCmd = &cobra.Command{
 	Use:   "analyze",
 	Short: "Analyser les logs depuis un fichier de configuration",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Analyze lancé avec config =", configPath, " output =", outputPath)
+		runAnalyze(configPath, outputPath)
 	},
 }
 
